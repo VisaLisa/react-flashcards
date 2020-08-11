@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
+import Card from './card/card';
 
-function App() {
+class App extends Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      cards: [
+        {id: 1, eng: "English", han: "Hangul", rom: "Romanized"},
+        {id: 2, eng: "English_2", han: "Hangul_2", rom: "Romanized_2"},
+      ],
+      currentCard: {}
+    }
+  }
+
+  componentWillMount(){
+    const currentCards = this.state.cards;
+    this.setState({
+      cards: currentCards,
+      currentCard: this.getRandomCard(currentCards)
+    })
+  }
+
+  getRandomCard(currentCards){
+    var card = currentCards[Math.floor(Math.random() * currentCards.length)];
+    return(card);
+  }
+  render(){
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="cardRow">
+      <Card eng={this.state.currentCard.eng} 
+            han={this.state.currentCard.han}
+            rom={this.state.currentCard.rom}
+            />
+      </div>
     </div>
   );
+  }
 }
 
 export default App;
