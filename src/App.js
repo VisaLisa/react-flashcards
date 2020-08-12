@@ -1,21 +1,56 @@
 import React, { Component } from 'react';
 import './App.css';
 import Card from './card/card';
+import DrawButton from './DrawButton/drawbutton';
+import firebase from 'firebase/app';
+import 'firebase/database';
+
+import { DB_CONFIG } from './config/firebase/db_config';
 
 class App extends Component {
   constructor(props){
     super(props);
 
+    if(!firebase.apps.length){
+      firebase.initializeApp(DB_CONFIG);
+    }
+    this.database = firebase.database().ref().child('cards');
+    this.updateCard = this.updateCard.bind(this); 
+
     this.state = {
-      cards: [
-        {id: 1, eng: "English", han: "Hangul", rom: "Romanized"},
-        {id: 2, eng: "English_2", han: "Hangul_2", rom: "Romanized_2"},
-      ],
+      cards: [],
       currentCard: {}
     }
   }
 
+
   componentWillMount(){
+    const currentCards = this.state.cards;
+    this.database.on('child_added', snap => {
+      currentCards.push({
+        id: snap.val().id,
+        eng: snap.val().eng,
+        han: snap.val().han,
+        rom: snap.val().rom,
+      })
+
+      this.setState({
+        cards: currentCards,
+        currentCard: this.getRandomCard(currentCards)
+      })
+    })
+  }
+
+  getRandomCard(currentCards){
+    var randomIndex = Math.floor(Math.random() * currentCards.length);
+    var card = currentCards[randomIndex];
+    if (card === this.state.currentCard){
+      this.getRandomCard(currentCards)
+    }
+    return(card);
+  }
+
+  updateCard(){
     const currentCards = this.state.cards;
     this.setState({
       cards: currentCards,
@@ -23,10 +58,6 @@ class App extends Component {
     })
   }
 
-  getRandomCard(currentCards){
-    var card = currentCards[Math.floor(Math.random() * currentCards.length)];
-    return(card);
-  }
   render(){
   return (
     <div className="App">
@@ -35,6 +66,9 @@ class App extends Component {
             han={this.state.currentCard.han}
             rom={this.state.currentCard.rom}
             />
+      </div>
+      <div className="buttonRow">
+        <DrawButton  drawCard={this.updateCard}/>
       </div>
     </div>
   );
