@@ -2,7 +2,7 @@
     cursor: pointer;
     height: 400px;
     width: 400px;
-    perspective: 800px;
+    perspective: 00px;
     position: relative;
     margin: auto;
     transition: ease-in;
@@ -19,7 +19,7 @@
   
   .card:hover {
     transform: rotateY(180deg);
-    transition: all 0.7s ease-in-out;
+    transition: all 0.4s ease-in-out;
   }
   
   .card .front {
